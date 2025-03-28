@@ -58,6 +58,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     public void save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+       user.setRoles(List.of(roleService.getRoleByName(user.getRoles().get(0).getName())));
         repository.save(user);
     }
 

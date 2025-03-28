@@ -10,6 +10,8 @@ import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -34,6 +36,12 @@ public class AdminController {
         return "admin";
     }
 
+    @GetMapping("/getAllUsers")
+    @ResponseBody
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.findAll()); //работает!
+    }
+
     @PostMapping("/create")
     @ResponseBody
     public ResponseEntity<String> create(@RequestBody User user) {
@@ -41,22 +49,24 @@ public class AdminController {
         return ResponseEntity.ok("");
     }
 
-    @PatchMapping("/edit")
-    public String edit(Model model, @RequestParam("id") int id) {
-        model.addAttribute("user", userService.findForEdit(id));
-        return "admin";
-    }
+//    @PatchMapping("/edit")
+//    public String edit(Model model, @RequestParam("id") int id) {
+//        model.addAttribute("user", userService.findForEdit(id));
+//        return "admin";
+//    }
 
-    @PatchMapping("/edit/update")
+    @PatchMapping("/update")
     @ResponseBody
-    public ResponseEntity<String> update(@RequestBody User userUpdate) {
-        userService.update(userUpdate);
-        return ResponseEntity.ok().body("");
+    public ResponseEntity<String> update(@RequestBody User user) {
+//        userService.findForEdit(id);
+        userService.update(user);
+        return ResponseEntity.ok().body(""); //работает!
     }
 
     @DeleteMapping("/delete/{id}")
-    public String delete(@PathVariable("id") int id) {
+    @ResponseBody
+    public ResponseEntity<String> delete(@PathVariable("id") int id) {
         userService.delete(id);
-        return "redirect:/admin";
+        return ResponseEntity.noContent().build(); //работает
     }
 }
