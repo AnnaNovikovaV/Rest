@@ -6,6 +6,7 @@ window.onload = function () {
 // Bootstrap 5 modal initialization
 let editUserModal;
 let deleteUserModal;
+let allUsersTab;
 
 document.addEventListener('DOMContentLoaded', function() {
     editUserModal = new bootstrap.Modal(document.getElementById('editUserModal'));
@@ -172,14 +173,11 @@ function addNewUser() {
         lastname: user_info[1].value,
         age: parseInt(user_info[2].value), // Преобразование в число
         email: user_info[3].value,
-        password: user_info[4].value,
-        // roles: Array.from(role_select.selectedOptions)
-        //     .map(option => String(option.value))
-        //     .map(option : role)
+        password: user_info[4].value
     };
     class Role {
-        constructor(name) {
-            this.name = name;
+        constructor(id) {
+            this.id = id;
         }
     }
     user.roles = Array.from(role_select.selectedOptions)
@@ -194,15 +192,26 @@ function addNewUser() {
             if (!response.ok) {
                 return response.text().then(text => { throw new Error(text) });
             }
+            console.log("Вошли в первый then");
+            document.getElementById('newUserForm').reset();
+            allUsersTab = new bootstrap.Tab(document.getElementById('all-users-tab'));
+            allUsersTab.show();
+            console.log("Сбросили форму нового юзера");
+            clearTable();
+            fillTable();
+            console.log("Выполнили все действия");
             return response.json();
         })
         .then(() => {
-            // document.getElementById("all-users-tab").click();
+            console.log("Вошли в первый then");
             document.getElementById('newUserForm').reset();
-            const allUsersTab = new bootstrap.Tab(document.getElementById('all-users-tab'));
+            allUsersTab = new bootstrap.Tab(document.getElementById('allUsers'));
             allUsersTab.show();
+            console.log("Сбросили форму нового юзера");
             clearTable();
             fillTable();
+            console.log("Выполнили все действия");
+
         })
         .catch(error => {
             // console.error("Ошибка:", error);

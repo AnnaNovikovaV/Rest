@@ -58,13 +58,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     public void save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-       user.setRoles(List.of(roleService.getRoleByName(user.getRoles().get(0).getName())));
+        user.setRoles(getRoles(user));
         repository.save(user);
     }
 
     @Transactional
     public void update(User updatedUser) {
         User user = findById(updatedUser.getId());
+        List<Role> roles = updatedUser.getRoles().stream().map(r -> getRole(r.getName())).collect(Collectors.toList());
+        updatedUser.setRoles(roles);
         repository.save(mapper.toUser(user, updatedUser));
     }
 
@@ -86,5 +88,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(List<Role> roles) {
         return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
+    }
+
+    private Role getRole(String name) {
+        Role role = roleService.getRoleByName(name);
+        return role;
+    }
+
+    private List<Role> getRoles(User user) {
+        List<Long> ids = user.getRoles()
+                .stream()
+                .map(Role::getId)
+                .collect(Collectors.toList());
+       return ids.stream()
+               .map(id -> roleService.findById(id))
+               .collect(Collectors.toList());
     }
 }

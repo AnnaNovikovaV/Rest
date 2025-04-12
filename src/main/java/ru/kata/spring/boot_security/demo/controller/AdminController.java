@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
-public class AdminController {
+public class  AdminController {
 
     UserService userService;
 
@@ -48,12 +48,6 @@ public class AdminController {
         userService.save(user);
         return ResponseEntity.ok("");
     }
-
-//    @PatchMapping("/edit")
-//    public String edit(Model model, @RequestParam("id") int id) {
-//        model.addAttribute("user", userService.findForEdit(id));
-//        return "admin";
-//    }
 
     @PatchMapping("/update")
     @ResponseBody
