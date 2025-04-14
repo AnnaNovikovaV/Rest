@@ -1,4 +1,3 @@
-
 window.onload = function () {
     fillTable();
 }
@@ -8,7 +7,7 @@ let editUserModal;
 let deleteUserModal;
 let allUsersTab;
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     editUserModal = new bootstrap.Modal(document.getElementById('editUserModal'));
     deleteUserModal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
 });
@@ -175,22 +174,26 @@ function addNewUser() {
         email: user_info[3].value,
         password: user_info[4].value
     };
+
     class Role {
         constructor(id) {
             this.id = id;
         }
     }
+
     user.roles = Array.from(role_select.selectedOptions)
         .map(option => new Role(String(option.value)));
 
     fetch('/admin/create', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        headers: {'Content-Type': 'application/json;charset=utf-8'},
         body: JSON.stringify(user)
     })
         .then(response => {
             if (!response.ok) {
-                return response.text().then(text => { throw new Error(text) });
+                return response.text().then(text => {
+                    throw new Error(text)
+                });
             }
             console.log("Вошли в первый then");
             document.getElementById('newUserForm').reset();
@@ -213,8 +216,4 @@ function addNewUser() {
             console.log("Выполнили все действия");
 
         })
-        .catch(error => {
-            // console.error("Ошибка:", error);
-            // alert("Ошибка при создании: " + error.message);
-        });
 }

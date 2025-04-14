@@ -100,8 +100,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .stream()
                 .map(Role::getId)
                 .collect(Collectors.toList());
-       return ids.stream()
-               .map(id -> roleService.findById(id))
-               .collect(Collectors.toList());
+        return ids.stream()
+                .map(id -> roleService.findById(id))
+                .collect(Collectors.toList());
     }
 }

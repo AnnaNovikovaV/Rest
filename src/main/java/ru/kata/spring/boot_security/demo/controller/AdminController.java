@@ -11,12 +11,11 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Controller
 @RequestMapping("/admin")
-public class  AdminController {
+public class AdminController {
 
     UserService userService;
 
@@ -39,7 +38,7 @@ public class  AdminController {
     @GetMapping("/getAllUsers")
     @ResponseBody
     public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.findAll()); //работает!
+        return ResponseEntity.ok(userService.findAll());
     }
 
     @PostMapping("/create")
@@ -52,15 +51,14 @@ public class  AdminController {
     @PatchMapping("/update")
     @ResponseBody
     public ResponseEntity<String> update(@RequestBody User user) {
-//        userService.findForEdit(id);
         userService.update(user);
-        return ResponseEntity.ok().body(""); //работает!
+        return ResponseEntity.ok().body("");
     }
 
     @DeleteMapping("/delete/{id}")
     @ResponseBody
     public ResponseEntity<String> delete(@PathVariable("id") int id) {
         userService.delete(id);
-        return ResponseEntity.noContent().build(); //работает
+        return ResponseEntity.noContent().build();
     }
 }
