@@ -10,4 +10,6 @@ public interface RoleService {
     Role findById(Long id);
 
     Role getRoleByName(String name);
+
+    void saveAll(List<Role> roles);
 }

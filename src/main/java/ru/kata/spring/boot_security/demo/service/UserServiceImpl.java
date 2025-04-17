@@ -2,8 +2,6 @@ package ru.kata.spring.boot_security.demo.service;
 
 
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,7 +13,7 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import ru.kata.spring.boot_security.demo.userMapper.UserMapper;
 
-import java.util.Collection;
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,16 +76,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        User user = repository.findByEmail(email);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-                mapRolesToAuthorities(user.getRoles()));
-    }
-
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(List<Role> roles) {
-        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
+        User user = repository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return user;
     }
 
     private Role getRole(String name) {
@@ -103,5 +93,32 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return ids.stream()
                 .map(id -> roleService.findById(id))
                 .collect(Collectors.toList());
+    }
+
+    @PostConstruct
+    public void initDefaultUsers() {
+        Role userRole = new Role();
+        userRole.setName("ROLE_USER");
+        Role adminRole = new Role();
+        adminRole.setName("ROLE_ADMIN");
+        roleService.saveAll(List.of(userRole, adminRole));
+
+        User admin = new User();
+        admin.setUsername("admin");
+        admin.setLastname("admin");
+        admin.setAge(30);
+        admin.setEmail("admin@example.com");
+        admin.setPassword(passwordEncoder.encode("admin123"));
+        admin.setRoles(List.of(adminRole));
+
+        User user = new User();
+        user.setUsername("user");
+        user.setLastname("user");
+        user.setAge(20);
+        user.setEmail("user@example.com");
+        user.setPassword(passwordEncoder.encode("user123"));
+        user.setRoles(List.of(userRole));
+
+        repository.saveAll(List.of(admin, user));
     }
 }
